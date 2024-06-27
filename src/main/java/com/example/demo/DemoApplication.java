@@ -6,6 +6,9 @@ import java.util.UUID;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +27,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @SpringBootApplication
+//@configurationproperties 를 사용하기 위해서 메인 클래스에서 
+@ConfigurationPropertiesScan
 public class DemoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
+	}
+	
+	@Bean
+	@ConfigurationProperties(prefix = "droid")
+	Droid createDroid() {
+		return new Droid();
 	}
 
 }
@@ -69,6 +80,48 @@ class Coffee{
 	
 	public void setId(String id) {
 		this.id = id;
+	}
+}
+
+@ConfigurationProperties(prefix = "greeting")
+class Greeting {
+	private String name;
+	private String coffee;
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getCoffee() {
+		return coffee;
+	}
+	
+	public void setCoffee(String coffee) {
+		this.coffee = coffee;
+	}
+}
+
+class Droid {
+	private String id, description;
+	
+	public String getId() {
+		return id;
+	}
+	
+	public void setid(String id) {
+		this.id = id;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }
 
@@ -118,6 +171,41 @@ class RestApiDemoController{
 	}
 }
 
+@RestController
+@RequestMapping("/greeting")
+class GreetingController {
+	private final Greeting greeting;
+	
+	public GreetingController (Greeting greeting) {
+		this.greeting = greeting;
+	}
+	
+	@GetMapping
+	String getGreeting() {
+		return greeting.getName();
+	}
+	
+	@GetMapping("/coffee")
+	String getNameAndCoffee() {
+		return greeting.getCoffee();
+	}
+}
+
+@RestController
+@RequestMapping("/droid")
+class DroidController {
+	private final Droid droid;
+	
+	public DroidController(Droid droid) {
+		this.droid = droid;
+	}
+	
+	@GetMapping
+	Droid getDroid() {
+		return droid;
+	}
+}
+
 //restapidemocontroller에서 생성하던 coffeerepositroy 데이터를 따로 뺌
 @Component
 class DataLoader {
@@ -138,3 +226,4 @@ class DataLoader {
 		));
 	}
 }
+
