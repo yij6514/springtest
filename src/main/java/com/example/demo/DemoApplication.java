@@ -28,8 +28,12 @@ public class DemoApplication {
 }
 
 class Coffee{
-	private final String id;
+	private String id;
 	private String name;
+	
+	public Coffee() {
+		
+	}
 
 	public Coffee(String id, String name){
 		this.id = id;
@@ -50,6 +54,10 @@ class Coffee{
 
 	public void setName(String name){
 		this.name = name;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
 	}
 }
 
@@ -95,7 +103,7 @@ class RestApiDemoController{
 	
 	//HTTP Put 메소드로 localhost:8080/coffees/id 로 받을때 json에 있는 정보로 만약 coffees 리스트에 없으면 return 함수로 추가 있다면 수정함
 	@PutMapping("/{id}")
-	Coffee putCoffee(@PathVariable String id, @RequestBody Coffee coffee) {
+	ResponseEntity<Coffee> putCoffee(@PathVariable String id, @RequestBody Coffee coffee) {
 		int coffeeIndex = -1;
 		
 		for(Coffee c: coffees) {
